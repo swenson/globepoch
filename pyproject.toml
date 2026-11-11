@@ -1,0 +1,51 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "globepoch"
+version = "0.1.0"
+description = "Globepoch: a daily game where you guess the year an old map was made."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { file = "LICENSE" }
+authors = [{ name = "swenson" }]
+dependencies = [
+    "Pillow>=10",
+    "Jinja2>=3.1",
+    "tomli>=2; python_version < '3.11'",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8",
+    "pytest-cov>=5",
+    "ruff>=0.16",
+    "pre-commit>=4",
+]
+
+[project.scripts]
+globepoch = "globepoch.__main__:main"
+
+[project.urls]
+Homepage = "https://globepoch.com"
+Source = "https://github.com/swenson/globepoch"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/globepoch"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "SIM"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+docstring-code-format = true
