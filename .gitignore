@@ -218,3 +218,8 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Globepoch build output, tiles staged for upload, downloaded scans and tile cache
+_site/
+_tiles/
+.cache/globepoch/

@@ -1,0 +1,128 @@
+name: Deploy
+
+# Builds today's puzzle (UTC), uploads any new map tiles to the DigitalOcean Spaces bucket,
+# then publishes the pages to GitHub Pages. Each run also tiles and uploads tomorrow's map,
+# so the run after midnight only has to render HTML. One-time setup: see "Deployment" in
+# README.md.
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "1 0 * * *" # 00:01 UTC, when the new puzzle starts
+  workflow_dispatch:
+    inputs:
+      date:
+        description: "Build the site as it looks on this date (YYYY-MM-DD); blank = today UTC"
+        required: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+env:
+  SPACES_BUCKET: globepoch
+  SPACES_ENDPOINT: https://sfo2.digitaloceanspaces.com
+  # Public URL of the bucket's tiles/ folder. Set the TILES_URL repository variable to serve
+  # them through the Spaces CDN or a custom domain instead.
+  GLOBEPOCH_TILES_URL: ${{ vars.TILES_URL || 'https://globepoch.sfo2.digitaloceanspaces.com/tiles' }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    permissions:
+      contents: read
+      pages: read # configure-pages looks up the site's URL
+    env:
+      DATE: ${{ inputs.date }}
+    outputs:
+      new-tiles: ${{ steps.staged.outputs.count }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+      - run: python -m pip install .
+
+      - id: pages
+        uses: actions/configure-pages@v6
+
+      - name: Build the site
+        env:
+          SITE_URL: ${{ steps.pages.outputs.base_url }}
+        run: |
+          globepoch check
+          globepoch build --out _site --site-url "$SITE_URL/" ${DATE:+--date "$DATE"}
+
+      # A failure here (say, the scan's server is down) shouldn't hold up today's puzzle;
+      # tomorrow's run tiles the map itself if it has to.
+      - name: Tile tomorrow's map ahead of time
+        continue-on-error: true
+        run: globepoch prepare --days 1 ${DATE:+--date "$DATE"}
+
+      - id: staged
+        name: Count new tile pyramids
+        run: echo "count=$(find _tiles -name '*.dzi' 2>/dev/null | wc -l)" >> "$GITHUB_OUTPUT"
+
+      - if: steps.staged.outputs.count != '0'
+        uses: actions/upload-artifact@v7
+        with:
+          name: tiles
+          path: _tiles
+          retention-days: 3
+
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: _site
+
+  # Kept apart from the build so the bucket's keys are never in the same job as the build code.
+  upload-tiles:
+    needs: build
+    if: needs.build.outputs.new-tiles != '0'
+    runs-on: ubuntu-latest
+    environment: spaces
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.SPACES_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.SPACES_SECRET_ACCESS_KEY }}
+      AWS_DEFAULT_REGION: us-east-1 # required by the CLI; Spaces ignores it
+      # Spaces rejects the checksums newer AWS CLIs send by default.
+      AWS_REQUEST_CHECKSUM_CALCULATION: when_required
+      AWS_RESPONSE_CHECKSUM_VALIDATION: when_required
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: tiles
+          path: _tiles
+
+      # A pyramid's name is a hash of its contents, so its files never change: cache them
+      # for a year. The .dzi descriptors go last because the build treats a pyramid with a
+      # .dzi as fully uploaded.
+      - name: Upload to Spaces
+        run: |
+          opts=(--endpoint-url "$SPACES_ENDPOINT" --recursive --acl public-read
+                --cache-control "public, max-age=31536000, immutable" --only-show-errors)
+          aws s3 cp _tiles "s3://$SPACES_BUCKET/tiles/" "${opts[@]}" --exclude "*.dzi"
+          aws s3 cp _tiles "s3://$SPACES_BUCKET/tiles/" "${opts[@]}" \
+            --exclude "*" --include "*.dzi" --content-type application/xml
+          find _tiles -name '*.dzi' | sed 's|^_tiles/|uploaded |; s|/map.dzi$||'
+
+  deploy:
+    needs: [build, upload-tiles]
+    # upload-tiles is skipped when there are no new tiles; that's fine, a failure isn't.
+    if: >-
+      !cancelled() && needs.build.result == 'success' &&
+      (needs.upload-tiles.result == 'success' || needs.upload-tiles.result == 'skipped')
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5

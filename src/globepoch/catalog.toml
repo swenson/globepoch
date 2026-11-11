@@ -1,0 +1,388 @@
+# Globepoch map catalog.
+#
+# Every [[map]] needs: id, year, title, creator, place, source_page, credit, blurb, and either
+#   iiif      = an IIIF Image API service URL (fetched in tiles and stitched), or
+#   image_url = a direct link to a JPEG/PNG/TIFF scan.
+#   date    = YYYY-MM-DD  -> scheduled for that day (dates must run from `epoch` with no gaps)
+#   no date               -> backlog; used in file order once the scheduled days run out
+#   crop    = [left, top, right, bottom]  fractions of the scan to keep (applied first)
+#   redact  = [[l, t, r, b], ...]         fractions of the (cropped) image to black out —
+#                                         printed years, library date stamps, call numbers…
+#   max_px  = longest side of the tiled image (default 10000)
+#
+# Preview a map (and check its redactions) without waiting for its day:
+#   python -m globepoch build --map <id> --out /tmp/preview
+#
+# All scans so far come from the Library of Congress IIIF image server (tile.loc.gov); its
+# Geography & Map Division collections are free to use and reuse.
+
+epoch = 2026-11-10
+min_year = 1400
+
+# ---------------------------------------------------------------------------------------
+# Scheduled: the first twelve days
+# ---------------------------------------------------------------------------------------
+
+[[map]]
+id = "columbian-exposition"
+date = 2026-11-10
+year = 1893
+title = "Bird's-eye view of the World's Columbian Exposition, Chicago"
+creator = "Rand McNally & Co."
+place = "Chicago, United States"
+source_page = "https://www.loc.gov/item/98687181/"
+iiif = "https://tile.loc.gov/image-services/iiif/service:gmd:gmd410:g4104:g4104c:pm001522"
+credit = "Library of Congress, Geography and Map Division"
+blurb = "The gleaming 'White City' built on Chicago's lakefront for the world's fair marking 400 years since Columbus's first voyage. Look for George Ferris's brand-new wheel turning on the Midway at the top of the view."
+redact = [
+  [0.12, 0.872, 0.995, 0.922],  # title, copyright line and library stamp
+]
+
+[[map]]
+id = "edo-oezu"
+date = 2026-11-11
+year = 1676
+title = "Edo ōezu (Great map of Edo)"
+creator = "Ochikochi Dōin"
+place = "Edo (Tokyo), Japan"
+source_page = "https://www.loc.gov/item/gm71005200/"
+iiif = "https://tile.loc.gov/image-services/iiif/service:gmd:gmd7:g7964:g7964t:ct011926"
+credit = "Library of Congress, Geography and Map Division"
+blurb = "A woodblock-printed plan of the shogun's capital, reduced from the official survey and showing which samurai lords owned each estate around Edo Castle. North is to the right. A later owner noted a great fire of 1829 in the top right corner, which is blacked out here."
+redact = [
+  [0.92, 0.0, 1.0, 0.21],      # later owner's dated annotation
+  [0.0, 0.83, 0.105, 1.0],     # publisher's colophon with the era date, pencilled note
+]
+
+[[map]]
+id = "rennell-hindoostan"
+date = 2026-11-12
+year = 1782
+title = "Hindoostan"
+creator = "James Rennell"
+place = "Indian subcontinent"
+source_page = "https://www.loc.gov/item/2009582749/"
+iiif = "https://tile.loc.gov/image-services/iiif/service:gmd:gmd7:g7625:g7625:ct001443"
+credit = "Library of Congress, Geography and Map Division"
+blurb = "The East India Company's Surveyor General of Bengal compiled the first reasonably accurate map of the whole subcontinent. The cartouche, set in a laurel wreath, shows Brahmins handing their sacred texts to Britannia, a piece of imperial propaganda."
+redact = [
+  [0.585, 0.933, 0.676, 0.945], # 'By J. Rennell F.R.S. <year>' under the title
+  [0.0, 0.96, 1.0, 1.0],        # publication line, call number and library stamp
+]
+
+[[map]]
+id = "usaf-lunar-mosaic"
+date = 2026-11-13
+year = 1962
+title = "USAF Lunar Wall Mosaic (LEM-1B)"
+creator = "US Air Force Aeronautical Chart and Information Center"
+place = "The Moon (near side)"
+source_page = "https://www.loc.gov/item/00561368/"
+iiif = "https://tile.loc.gov/image-services/iiif/service:gmd:gmd3:g3196:g3196a:ct003801"
+credit = "Library of Congress, Geography and Map Division"
+blurb = "Pieced together from the best telescope photographs of the day, when the race to the Moon had only just begun. Seven years later Apollo 11 touched down in the Sea of Tranquility, right of centre."
+redact = [
+  [0.0, 0.968, 1.0, 1.0],       # edition and compilation dates along the bottom margin
+  [0.872, 0.84, 0.97, 0.945],   # 'Graphic data' box citing its sources' dates
+]
+
+[[map]]
+id = "ortelius-typus-orbis"
+date = 2026-11-14
+year = 1579
+title = "Typus orbis terrarum"
+creator = "Abraham Ortelius (engraved by Frans Hogenberg)"
+place = "The world"
+source_page = "https://www.loc.gov/item/2017585794/"
+iiif = "https://tile.loc.gov/image-services/iiif/service:gmd:gmd3:g3200:g3200:ct007008"
+credit = "Library of Congress, Geography and Map Division"
+blurb = "From Ortelius's Theatrum Orbis Terrarum, often called the first modern atlas. A crack in the plate and re-engraved clouds date this printing to 1579; note the vast, imagined southern continent, 'not yet known'."
+redact = [
+  [0.86, 0.88, 1.0, 1.0],       # pencilled call number with a date
+]
+
+[[map]]
+id = "viele-new-york"
+date = 2026-11-15
+year = 1865
+title = "Topographical map of the City of New York, showing original water courses and made land"
+creator = "Egbert L. Viele"
+place = "Manhattan, New York"
+source_page = "https://www.loc.gov/item/2006629795/"
+iiif = "https://tile.loc.gov/image-services/iiif/service:gmd:gmd380:g3804:g3804n:ct002003"
+max_px = 12000
+credit = "Library of Congress, Geography and Map Division"
+blurb = "A sanitary engineer's map of the streams, marshes and shorelines that were buried under Manhattan's street grid. Builders still consult it to find out what lies under their foundations."
+redact = [
+  [0.025, 0.9, 0.1, 0.94],      # 'Entered according to Act of Congress in the year…'
+  [0.85, 0.885, 0.88, 0.945],   # library date stamp
+]
+
+[[map]]
+id = "ricci-kunyu-wanguo"
+date = 2026-11-16
+year = 1602
+title = "Kunyu wanguo quantu (Map of the Myriad Countries of the World), left half"
+creator = "Matteo Ricci, with Li Zhizao and Zhang Wentao"
+place = "The world, printed in Beijing"
+source_page = "https://www.loc.gov/item/2010585650/"
+iiif = "https://tile.loc.gov/image-services/iiif/service:gmd:gmd3:g3200:g3200:ex000006Za"
+credit = "Library of Congress, Geography and Map Division (James Ford Bell Library copy)"
+blurb = "The Jesuit missionary Matteo Ricci and the scholar Li Zhizao printed this six-panel woodblock map in Beijing, introducing European geography to China while keeping China near the middle of the world. The Wanli Emperor later ordered copies for his court."
+
+[[map]]
+id = "lenfant-washington"
+date = 2026-11-17
+year = 1792
+title = "Plan of the City of Washington"
+creator = "Pierre Charles L'Enfant (engraved by Thackara & Vallance)"
+place = "Washington, D.C., United States"
+source_page = "https://www.loc.gov/item/88694159/"
+iiif = "https://tile.loc.gov/image-services/iiif/service:gmd:gmd385:g3850:g3850:ct000509"
+credit = "Library of Congress, Geography and Map Division"
+blurb = "The first printed edition of L'Enfant's plan for a capital that did not yet exist. Its grand diagonal avenues and its 'Grand Avenue' (today's Mall) were laid out across farmland between the Potomac and its Eastern Branch."
+redact = [
+  [0.73, 0.88, 0.83, 0.96],     # library accession stamp
+]
+
+[[map]]
+id = "twelfth-army-group-situation"
+date = 2026-11-18
+year = 1944
+title = "HQ Twelfth Army Group situation map, December 25"
+creator = "Allied Forces, 12th Army Group, Engineer Section"
+place = "Belgium, Luxembourg, France and western Germany"
+source_page = "https://www.loc.gov/item/2004630297/"
+iiif = "https://tile.loc.gov/image-services/iiif/service:gmd:gmd5:g5701:g5701s:ict21204"
+credit = "Library of Congress, Geography and Map Division"
+redact = [
+  [0.04, 0.082, 0.35, 0.108],   # 'Situation 1200 hrs <date>'
+  [0.93, 0.0, 1.0, 0.12],       # pencilled call number
+  [0.0, 0.935, 1.0, 1.0],       # declassification and library stamps
+]
+blurb = "The daily situation map at General Bradley's headquarters on Christmas Day, during the Battle of the Bulge, with the German salient pushing into the Ardennes and the 101st Airborne surrounded at Bastogne."
+
+[[map]]
+id = "waldseemuller-universalis-cosmographia"
+date = 2026-11-19
+year = 1507
+title = "Universalis cosmographia secundum Ptholomaei traditionem et Americi Vespucii aliorumque lustrationes"
+creator = "Martin Waldseemüller"
+place = "The world"
+source_page = "https://www.loc.gov/item/2003626426/"
+iiif = "https://tile.loc.gov/image-services/iiif/service:gmd:gmd3:g3200:g3200:ct000725C"
+max_px = 12000
+credit = "Library of Congress, Geography and Map Division"
+blurb = "America's 'birth certificate': the first map known to use the name America, made by scholars in Saint-Dié, Lorraine, and printed from twelve woodblocks. The only surviving copy was bought by the Library of Congress for $10 million."
+
+[[map]]
+id = "rocque-london"
+date = 2026-11-20
+year = 1746
+title = "A plan of the cities of London and Westminster, and borough of Southwark"
+creator = "John Rocque (engraved by John Pine)"
+place = "London, England"
+source_page = "https://www.loc.gov/item/76696823/"
+iiif = "https://tile.loc.gov/image-services/iiif/service:gmd:gmd5:g5754:g5754l:ct004187"
+max_px = 12000
+credit = "Library of Congress, Geography and Map Division"
+redact = [
+  [0.484, 0.932, 0.515, 0.956], # 'This Work was begun in March 17xx, and Publish'd 17xx…'
+  [0.0, 0.985, 1.0, 1.0],       # call number and stamps in the bottom margin
+]
+blurb = "Rocque spent about a decade surveying Georgian London street by street for this 24-sheet plan. Zoom in to find individual buildings, formal gardens, ships on the Thames and the open fields at the city's edge that were about to disappear."
+
+[[map]]
+id = "general-map-of-cairo"
+date = 2026-11-21
+year = 1920
+title = "General map of Cairo"
+creator = "Survey of Egypt"
+place = "Cairo, Egypt"
+source_page = "https://www.loc.gov/item/2009580102/"
+iiif = "https://tile.loc.gov/image-services/iiif/service:gmd:gmd8:g8304:g8304c:ct002478"
+credit = "Library of Congress, Geography and Map Division"
+blurb = "Cairo during the British protectorate, mapped by the Survey of Egypt. The inset follows the tramway out to Heliopolis, the desert garden city built by the Belgian industrialist Baron Empain."
+redact = [
+  [0.04, 0.905, 0.22, 0.93],    # 'Published by the Survey of Egypt, <year>'
+  [0.8, 0.91, 0.88, 0.955],     # library date stamp
+  [0.89, 0.93, 1.0, 1.0],       # pencilled accession number
+]
+
+# ---------------------------------------------------------------------------------------
+# Backlog: used in this order once the schedule above runs out
+# ---------------------------------------------------------------------------------------
+
+[[map]]
+id = "mitchell-map"
+year = 1755
+title = "A map of the British and French dominions in North America"
+creator = "John Mitchell"
+place = "Eastern North America"
+source_page = "https://www.loc.gov/item/74693169/"
+iiif = "https://tile.loc.gov/image-services/iiif/service:gmd:gmd3:g3300:g3300:ar003700"
+max_px = 12000
+credit = "Library of Congress, Geography and Map Division"
+blurb = "Often called the most important map in American history. It was commissioned on the eve of the French and Indian War, used to draw the borders of the United States in the 1783 Treaty of Paris, and still cited in boundary disputes in the 20th century."
+redact = [
+  [0.75, 0.655, 0.775, 0.676],  # 'Plantation Office, Feb. 13th, <year>'
+  [0.845, 0.95, 0.875, 0.978],  # library date stamp
+  [0.965, 0.94, 1.0, 0.99],     # pencilled call number
+  [0.0, 0.985, 1.0, 1.0],       # publication line in the bottom margin
+]
+
+[[map]]
+id = "cia-seoul-azimuthal"
+year = 1968
+title = "Azimuthal equidistant projection centered on Seoul"
+creator = "US Central Intelligence Agency"
+place = "The world, as seen from Seoul"
+source_page = "https://www.loc.gov/item/75692495/"
+iiif = "https://tile.loc.gov/image-services/iiif/service:gmd:gmd3:g3201:g3201b:ct002683"
+credit = "Library of Congress, Geography and Map Division"
+blurb = "Distances and directions measured from Seoul are true on this projection, which made it a Cold War reference for how far anywhere is from Seoul. Former place names such as Fort Lamy (now N'Djamena) help date it."
+redact = [
+  [0.0, 0.965, 0.12, 1.0],      # CIA map number with date code
+  [0.81, 0.885, 0.95, 0.955],   # library stamp and pencilled call number
+]
+
+[[map]]
+id = "caverio-planisphere"
+year = 1504
+title = "Nautical planisphere"
+creator = "Nicolò de Caverio"
+place = "The world"
+source_page = "https://www.loc.gov/item/2021668721/"
+iiif = "https://tile.loc.gov/image-services/iiif/service:gdc:gdcwdl:wd:l_:18:56:3:wdl_18563:T0000002_3"
+max_px = 12000
+credit = "Library of Congress, World Digital Library (original at the Bibliothèque nationale de France)"
+blurb = "A Genoese mapmaker's hand-painted chart on ten sheets of vellum, drawn from Portuguese sources only a dozen years after Columbus. Waldseemüller borrowed from charts like this one for his famous 1507 map."
+
+[[map]]
+id = "bunken-edo-oezu"
+year = 1861
+title = "Bunken Edo ōezu (Detailed great map of Edo)"
+creator = "Suharaya Mohē (publisher), revised by Mori Fūsai"
+place = "Edo (Tokyo), Japan"
+source_page = "https://www.loc.gov/item/gm71005165/"
+iiif = "https://tile.loc.gov/image-services/iiif/service:gmd:gmd7:g7964:g7964t:ct011889"
+credit = "Library of Congress, Geography and Map Division"
+redact = [
+  [0.0, 0.85, 0.075, 0.99],     # publisher's colophon with the era date
+]
+blurb = "A best-selling commercial map of Edo in the last years of the shogunate, after Commodore Perry's 'black ships' had forced Japan to open its ports. Set it beside the 1676 plan in this collection to see how much the city grew in the two centuries between them."
+
+[[map]]
+id = "blaeu-nova-totius"
+year = 1606
+title = "Nova totius terrarum orbis geographica ac hydrographica tabula"
+creator = "Willem Janszoon Blaeu"
+place = "The world"
+source_page = "https://www.loc.gov/item/87690702/"
+iiif = "https://tile.loc.gov/image-services/iiif/service:gmd:gmd3:g3200:g3200:ct001217r"
+credit = "Library of Congress, Geography and Map Division"
+blurb = "Willem Blaeu's decorative world map, framed by the planets, the four elements, the seasons and the Seven Wonders of the ancient world. Its border style was copied by Dutch mapmakers for decades."
+redact = [
+  [0.588, 0.818, 0.636, 0.836], # signature line with the date in the dedication
+]
+
+[[map]]
+id = "tva-pictorial"
+year = 1939
+title = "Tennessee Valley Area: pictorial map"
+creator = "Tennessee Valley Authority"
+place = "Tennessee River valley, United States"
+source_page = "https://www.loc.gov/item/2008628288/"
+iiif = "https://tile.loc.gov/image-services/iiif/service:gmd:gmd396:g3962:g3962t:ct002436"
+credit = "Library of Congress, Geography and Map Division"
+redact = [
+  [0.218, 0.2105, 0.292, 0.222], # 'to be completed <year>' (Pickwick Landing)
+  [0.39, 0.1695, 0.448, 0.1785], # 'to be completed <year>' (Guntersville)
+  [0.532, 0.151, 0.595, 0.1595], # 'to be completed <year>' (Chickamauga)
+  [0.66, 0.0, 1.0, 0.07],       # handwritten source note with the date
+  [0.675, 0.895, 0.735, 0.966], # library date stamp
+  [0.67, 0.968, 0.725, 0.981],  # printing-office imprint
+]
+blurb = "The Tennessee Valley Authority's chain of dams, a New Deal showpiece, was built for flood control and cheap electricity. This copy was printed in the report of a congressional investigation into the agency."
+
+[[map]]
+id = "michurin-moscow"
+year = 1739
+title = "Plan imperatorskago stolichnago goroda Moskvy (Plan of the imperial capital city of Moscow)"
+creator = "Ivan Michurin"
+place = "Moscow, Russia"
+source_page = "https://www.loc.gov/item/77695545/"
+iiif = "https://tile.loc.gov/image-services/iiif/service:gmd:gmd7:g7064:g7064m:hl000004"
+credit = "Library of Congress, Geography and Map Division"
+blurb = "The first accurately surveyed plan of Moscow, made under the architect Ivan Michurin in 1739 and engraved for the Academy of Sciences' Atlas Russicus of 1745. The Kremlin sits at the heart of the concentric rings of walls."
+redact = [
+  [0.06, 0.2, 0.2, 0.23],       # 'compiled … in 17xx'
+]
+
+[[map]]
+id = "stanley-great-forest"
+year = 1890
+title = "A map of the Great Forest Region, showing routes of the Emin Pasha Relief Expedition"
+creator = "Henry Morton Stanley"
+place = "Central Africa: the Congo to Lake Victoria"
+source_page = "https://www.loc.gov/item/2006627674/"
+iiif = "https://tile.loc.gov/image-services/iiif/service:gmd:gmd8:g8650:g8650:ct001275"
+credit = "Library of Congress, Geography and Map Division"
+redact = [
+  [0.42, 0.958, 0.58, 0.982],   # copyright line
+]
+blurb = "From Stanley's best-seller 'In Darkest Africa', tracing his disastrous march through the Ituri rainforest to 'rescue' Emin Pasha. This copy was mounted on linen for travelling salesmen selling the book door to door."
+
+[[map]]
+id = "berlinghieri-arabia"
+year = 1482
+title = "Tabula sexta de Asia (Sixth map of Asia)"
+creator = "Francesco Berlinghieri, after Ptolemy"
+place = "Arabia and the Persian Gulf"
+source_page = "https://www.loc.gov/item/2021668674/"
+iiif = "https://tile.loc.gov/image-services/iiif/service:gdc:gdcwdl:wd:l_:16:19:6:wdl_16196:197"
+credit = "Library of Congress, World Digital Library (original at Qatar National Library)"
+blurb = "Berlinghieri's Geographia, printed in Florence, retold Ptolemy's second-century geography in Italian verse, with copper-engraved maps. Arabia here is still drawn as Ptolemy described it some 1,300 years earlier."
+
+[[map]]
+id = "cia-antarctic-treaty"
+year = 1984
+title = "Antarctic treaty signatories"
+creator = "US Central Intelligence Agency"
+place = "The world"
+source_page = "https://www.loc.gov/item/84690252/"
+iiif = "https://tile.loc.gov/image-services/iiif/service:gmd:gmd9:g9801:g9801f:ct002625"
+credit = "Library of Congress, Geography and Map Division"
+blurb = "A map of the countries that had signed the Antarctic Treaty, the 1959 agreement that keeps the continent for science and peace. The full sheet also has tables, cropped here, listing the year each country joined. East and West Germany both appear as signatories."
+crop = [0.0, 0.0, 1.0, 0.52]
+
+[[map]]
+id = "lahainaluna-hawaii"
+year = 1838
+title = "A map of the Hawaiian Islands (two of the panels)"
+creator = "Engraved by students of the Lahainaluna Seminary"
+place = "Hawaiʻi: Maui, Molokaʻi, Lānaʻi and Kahoʻolawe"
+source_page = "https://www.loc.gov/item/2003627048/"
+iiif = "https://tile.loc.gov/image-services/iiif/service:gmd:gmd438:g4380:g4380:ct001050"
+credit = "Library of Congress, Geography and Map Division"
+blurb = "Hawaiian students at the missionary seminary of Lahainaluna on Maui engraved this map on copper, and the seminary is pictured in the title vignette. It is among the very first maps engraved and printed in the islands themselves."
+redact = [
+  [0.682, 0.659, 0.712, 0.675], # year under the vignette
+]
+
+[[map]]
+id = "peking-legations-defence"
+year = 1900
+title = "Defence of foreign legations, Peking, China"
+creator = "Harley B. Ferguson, US Army Corps of Engineers"
+place = "Beijing, China"
+source_page = "https://www.loc.gov/item/77693521/"
+iiif = "https://tile.loc.gov/image-services/iiif/service:gmd:gmd7:g7824:g7824b:ct005447"
+credit = "Library of Congress, Geography and Map Division"
+blurb = "A blueprint of the barricades, trenches and tunnels thrown up around the foreign legations during the 55-day siege of the Boxer Uprising, compiled for the American commander of the relief expedition. Two overlapping sheets were photographed together."
+redact = [
+  [0.63, 0.108, 0.74, 0.126],   # dates under the title
+  [0.947, 0.155, 0.97, 0.17],   # year in the 'lines of defence' legend
+  [0.858, 0.871, 0.886, 0.891], # 'Peking, Oct. <year>'
+  [0.0, 0.93, 1.0, 1.0],        # call-number labels and library stamp
+]

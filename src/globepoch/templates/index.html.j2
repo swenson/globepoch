@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>{{ name }} #{{ number }} — guess the year of the map</title>
+  {% if is_archive %}
+  <meta name="robots" content="noindex">
+  {% endif %}
+  <meta name="description" content="{{ tagline }}">
+  <meta property="og:title" content="{{ name }} #{{ number }}">
+  <meta property="og:description" content="{{ tagline }}">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="{{ page_url }}">
+  {% if preview_url %}
+  <meta property="og:image" content="{{ preview_url }}">
+  <meta name="twitter:card" content="summary_large_image">
+  {% endif %}
+  <meta name="theme-color" content="#efe4cc" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#16130f" media="(prefers-color-scheme: dark)">
+  <link rel="icon" href="{{ base }}static/favicon.svg" type="image/svg+xml">
+  {% if tiles_origin %}
+  <link rel="preconnect" href="{{ tiles_origin }}">
+  {% endif %}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IM+Fell+English+SC&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ base }}static/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <button class="icon-btn" id="help-btn" aria-label="How to play" title="How to play">?</button>
+    <h1 class="brand">
+      <img class="brand-mark" src="{{ base }}static/favicon.svg" alt="" width="28" height="28">
+      <span>{{ name }}</span>
+      <span class="brand-num">#{{ number }}</span>
+    </h1>
+    <div class="topbar-right">
+      <button class="icon-btn" id="archive-btn" aria-label="Earlier maps" title="Earlier maps">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3.5 10h17M8 3v4M16 3v4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <span class="badge" id="archive-badge" hidden></span>
+      </button>
+      <button class="icon-btn" id="stats-btn" aria-label="Statistics" title="Statistics">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+  </header>
+  {% if is_archive %}
+  <div class="archive-bar">
+    <span>Archive puzzle from <strong>{{ day.strftime("%A, %B") }} {{ day.day }}, {{ day.year }}</strong>. It counts toward your stats but not your streak.</span>
+    <a href="{{ base }}">Today's map →</a>
+  </div>
+  {% endif %}
+
+  <main class="stage">
+    <div id="viewer" class="viewer" aria-label="Zoomable map. Drag to pan, scroll or pinch to zoom."></div>
+    <div class="viewer-tools" role="toolbar" aria-label="Map controls">
+      <button class="tool" id="zoom-in" aria-label="Zoom in" title="Zoom in">+</button>
+      <button class="tool" id="zoom-out" aria-label="Zoom out" title="Zoom out">−</button>
+      <button class="tool" id="zoom-home" aria-label="Fit whole map" title="Fit whole map">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11l8-7 8 7M6 9.5V20h12V9.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <button class="tool" id="zoom-full" aria-label="Full screen" title="Full screen">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4H4v5M15 4h5v5M9 20H4v-5M15 20h5v-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <div class="viewer-hint" id="viewer-hint">Drag to explore · scroll or pinch to zoom</div>
+  </main>
+
+  <section class="panel" id="panel" aria-live="polite">
+    <form class="guess" id="guess-form" autocomplete="off">
+      <ol class="hints" id="hints" hidden></ol>
+      <div class="guess-row">
+        <button type="button" class="nudge" data-step="-10" aria-label="10 years earlier">−10</button>
+        <button type="button" class="nudge" data-step="-1" aria-label="1 year earlier">−1</button>
+        <label class="year-field">
+          <span class="visually-hidden">Your guess (year)</span>
+          <input id="year-input" type="number" inputmode="numeric" required>
+        </label>
+        <button type="button" class="nudge" data-step="1" aria-label="1 year later">+1</button>
+        <button type="button" class="nudge" data-step="10" aria-label="10 years later">+10</button>
+      </div>
+      <div class="slider-wrap">
+        <input id="year-slider" class="slider" type="range" step="1" aria-label="Year slider">
+        <div class="slider-marks" id="slider-marks" aria-hidden="true"></div>
+      </div>
+      <div class="slider-scale" id="slider-scale" aria-hidden="true"></div>
+      <button class="primary" id="submit-btn" type="submit">Lock in <span id="submit-year"></span><small class="guess-count" id="guess-count"></small></button>
+    </form>
+
+    <div class="result" id="result" hidden>
+      <div class="result-head">
+        <div class="score-big"><span id="r-score">0</span><small>/100</small></div>
+        <div class="result-text">
+          <p class="r-verdict" id="r-verdict"></p>
+          <p class="r-diff" id="r-diff"></p>
+        </div>
+      </div>
+      <p class="r-trail" id="r-trail"></p>
+      <div class="timeline" id="timeline" aria-hidden="true">
+        <div class="tl-window" id="tl-window"></div>
+        <div class="tl-pin tl-answer" id="tl-answer"><span></span></div>
+        <div class="tl-pin tl-guess" id="tl-guess"><span></span></div>
+      </div>
+      <div class="reveal">
+        <h2 id="r-title"></h2>
+        <p class="r-meta" id="r-meta"></p>
+        <p class="r-blurb" id="r-blurb"></p>
+        <p class="r-credit"><a id="r-source" target="_blank" rel="noopener">See the original scan</a> · <span id="r-credit"></span></p>
+      </div>
+      <div class="share-row">
+        <pre class="share-preview" id="share-preview"></pre>
+        <button class="primary" id="share-btn" type="button">Share result</button>
+      </div>
+      <button class="secondary" id="catchup-btn" type="button" hidden></button>
+      {% if is_archive %}
+      <p class="next"><a href="{{ base }}">Play today's map →</a></p>
+      {% else %}
+      <p class="next">Next map in <strong id="countdown">--:--:--</strong></p>
+      {% endif %}
+    </div>
+  </section>
+
+  <dialog class="modal" id="help-modal" aria-labelledby="help-title">
+    <form method="dialog"><button class="close" aria-label="Close">×</button></form>
+    <h2 id="help-title">How to play</h2>
+    <p>Every day {{ name }} shows one old map, scanned in high resolution from public-domain collections.</p>
+    <ol>
+      <li><strong>Explore.</strong> Drag to move around, and scroll or pinch to zoom in on the lettering, the borders, the place names, and the places that aren't on it yet.</li>
+      <li><strong>Guess the year</strong> the map was made. You get three guesses; after each miss you're told whether to go earlier or later, and whether you're within 100 years.</li>
+      <li><strong>Score</strong> up to 100 points for your closest guess: you lose one point for every full 10 years it's off, so anything within 9 years scores a perfect 100 (and ends the round) and 1,000 years off scores 0.</li>
+    </ol>
+    <p>Printed dates have been <span class="redacted-sample">blacked out</span>. Keep a streak going by scoring on consecutive days, then share your result with friends.</p>
+    <p class="muted">A new map arrives every day just after midnight UTC. Every earlier map stays playable from the calendar button at the top; those plays count toward your stats but not your streak.</p>
+  </dialog>
+
+  <dialog class="modal" id="stats-modal" aria-labelledby="stats-title">
+    <form method="dialog"><button class="close" aria-label="Close">×</button></form>
+    <h2 id="stats-title">Your statistics</h2>
+    <div class="stat-grid" id="stat-grid"></div>
+    <h3>Your score distribution</h3>
+    <div class="dist" id="dist"></div>
+    <p class="muted">These are your own results. They're stored in this browser and aren't sent to any server.</p>
+  </dialog>
+
+  <dialog class="modal" id="archive-modal" aria-labelledby="archive-title">
+    <form method="dialog"><button class="close" aria-label="Close">×</button></form>
+    <h2 id="archive-title">Every map so far</h2>
+    <p class="muted" id="archive-summary"></p>
+    <ol class="archive-list" id="archive-list" reversed></ol>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" hidden></div>
+
+  <script id="puzzle-data" type="application/json">{{ puzzle_json | safe }}</script>
+  <script src="https://cdn.jsdelivr.net/npm/openseadragon@5.0.1/build/openseadragon/openseadragon.min.js" crossorigin="anonymous"></script>
+  <script src="{{ base }}static/app.js"></script>
+</body>
+</html>
