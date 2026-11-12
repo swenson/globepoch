@@ -386,3 +386,103 @@ redact = [
   [0.858, 0.871, 0.886, 0.891], # 'Peking, Oct. <year>'
   [0.0, 0.93, 1.0, 1.0],        # call-number labels and library stamp
 ]
+
+[[map]]
+id = "murillo-velarde-filipinas"
+year = 1734
+title = "Carta hydrographica y chorographica de las Yslas Filipinas"
+creator = "Pedro Murillo Velarde (engraved by Nicolás de la Cruz Bagay)"
+place = "The Philippines"
+source_page = "https://www.loc.gov/item/2013585226/"
+iiif = "https://tile.loc.gov/image-services/iiif/service:gmd:gmd8:g8060:g8060:ct003137"
+credit = "Library of Congress, Geography and Map Division"
+blurb = "The Jesuit Pedro Murillo Velarde's chart of the Philippines, engraved in Manila by the Filipino printmaker Nicolás de la Cruz Bagay. The side panels show the islands' peoples and plans of Manila, Cavite, Zamboanga and Guam. Its depiction of Scarborough Shoal has been cited in the Philippines' modern dispute with China over the South China Sea."
+redact = [
+  [0.672, 0.274, 0.746, 0.282], # 'En Manila Año de <year>' under the title
+  [0.684, 0.057, 0.709, 0.072], # library date stamp
+  [0.70, 0.968, 0.785, 0.98],   # engraver's line with the year
+  [0.69, 0.992, 0.80, 1.0],     # pencilled call number
+]
+
+[[map]]
+id = "dumas-vorzet-paris"
+year = 1878
+title = "Paris et ses environs"
+creator = "Ed. Dumas-Vorzet, Institut géographique de Paris"
+place = "Paris, France"
+source_page = "https://www.loc.gov/item/2012586603/"
+iiif = "https://tile.loc.gov/image-services/iiif/service:gmd:gmd5:g5834:g5834p:ct003569"
+credit = "Library of Congress, Geography and Map Division"
+blurb = "A folding pocket map of Paris after Haussmann's rebuilding, with the twenty arrondissements inside the city's fortified wall and an inset of the tram lines. The Champ de Mars is marked for that year's Exposition Universelle; the Eiffel Tower came with the next one, in 1889. The inset of the surroundings was drawn for the Prussian siege of 1870–71."
+redact = [
+  [0.308, 0.122, 0.347, 0.14],  # year under the title
+  [0.21, 0.0385, 0.246, 0.046], # siege dates in the inset (close to the answer)
+  [0.945, 0.928, 0.983, 0.952], # library date stamp
+]
+
+[[map]]
+id = "du-val-canada"
+year = 1664
+title = "Le Canada faict par le Sr. de Champlain"
+creator = "Pierre Du Val, after Samuel de Champlain"
+place = "New France and eastern North America"
+source_page = "https://www.loc.gov/item/91683575/"
+iiif = "https://tile.loc.gov/image-services/iiif/service:gmd:gmd3:g3400:g3400:ct007539"
+credit = "Library of Congress, Geography and Map Division"
+blurb = "The French king's geographer Pierre Du Val based this map on the work of Samuel de Champlain, who founded Quebec and died in 1635. The coast still shows 'Nouvelle Svede' and 'Nouvelle Holande', though the Dutch had taken New Sweden in 1655 and the English took New Amsterdam the year this was published."
+redact = [
+  [0.58, 0.866, 0.675, 0.877],  # 'Avec Privilege <year>' in the cartouche
+  [0.95, 0.925, 0.995, 0.985],  # pencilled call number with the year
+]
+
+[[map]]
+id = "cia-ethiopia"
+year = 1976
+title = "Ethiopia"
+creator = "US Central Intelligence Agency"
+place = "Ethiopia and the Horn of Africa"
+source_page = "https://www.loc.gov/item/85690517/"
+iiif = "https://tile.loc.gov/image-services/iiif/service:gmd:gmd8:g8330:g8330:ct002898"
+credit = "Library of Congress, Geography and Map Division"
+blurb = "A CIA reference map made two years after the Derg, a Marxist military junta, overthrew Emperor Haile Selassie. Eritrea is still a province of Ethiopia (it became independent in 1993), and Djibouti is still the French Territory of the Afars and Issas, a year before its independence. The margin maps show population, economic activity and vegetation."
+redact = [
+  [0.212, 0.949, 0.263, 0.962], # CIA map number with its month-year code
+  [0.955, 0.122, 0.968, 0.1295], # year of the source atlas
+  [0.785, 0.915, 0.83, 0.975],  # pencilled call number with the year
+  [0.878, 0.925, 0.96, 0.995],  # library date stamp
+]
+
+[[map]]
+id = "arrowsmith-africa"
+year = 1802
+title = "Africa: to the committee and members of the British Association for Discovering the Interior Parts of Africa"
+creator = "Aaron Arrowsmith"
+place = "Africa"
+source_page = "https://www.loc.gov/item/2011585265/"
+iiif = "https://tile.loc.gov/image-services/iiif/service:gmd:gmd8:g8200:g8200:ct003367"
+credit = "Library of Congress, Geography and Map Division"
+blurb = "A four-sheet map dedicated to the African Association, the London club that sent Mungo Park to find the Niger. Away from the coasts it is mostly blank. The long east–west range across West Africa is the Mountains of Kong, which explorers later found did not exist."
+redact = [
+  [0.82, 0.2645, 0.858, 0.272],  # date under 'Rathbone Place' in the dedication
+  [0.455, 0.484, 0.476, 0.499], # library date stamp
+  [0.0, 0.981, 1.0, 1.0],       # publication lines and library stamps below the border
+]
+
+[[map]]
+id = "disturnell-mexico"
+year = 1847
+title = "Mapa de los Estados Unidos de Méjico"
+creator = "John Disturnell"
+place = "Mexico and the United States"
+source_page = "https://www.loc.gov/item/2019361159/"
+iiif = "https://tile.loc.gov/image-services/iiif/service:gmd:gmd4:g4410:g4410:ct008345"
+credit = "Library of Congress, Geography and Map Division"
+blurb = "A New York publisher's map of Mexico, printed in Spanish during the Mexican–American War. An edition of it was attached to the Treaty of Guadalupe Hidalgo, which moved the border south and gave the United States California and most of the Southwest. Its misplaced El Paso and Rio Grande led to a boundary dispute that the Gadsden Purchase settled."
+redact = [
+  [0.754, 0.259, 0.782, 0.27],  # year under the title
+  [0.583, 0.5435, 0.605, 0.552], # Palo Alto battle date in the inset
+  [0.581, 0.563, 0.601, 0.572], # Resaca de la Palma battle date
+  [0.638, 0.588, 0.6495, 0.5935], # battle dates in the inset's title
+  [0.4795, 0.4895, 0.487, 0.4945], # year on 'Genl. Wool's Route' in Texas
+  [0.712, 0.955, 0.752, 0.988], # library date stamp
+]
