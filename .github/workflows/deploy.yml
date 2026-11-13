@@ -47,6 +47,7 @@ jobs:
       DATE: ${{ inputs.date }}
     outputs:
       new-tiles: ${{ steps.staged.outputs.count }}
+      prepare: ${{ steps.prepare.outcome }}
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-python@v7
@@ -64,9 +65,10 @@ jobs:
           globepoch check
           globepoch build --out _site --site-url "$SITE_URL/" ${DATE:+--date "$DATE"}
 
-      # A failure here (say, the scan's server is down) shouldn't hold up today's puzzle;
-      # tomorrow's run tiles the map itself if it has to.
-      - name: Tile tomorrow's map ahead of time
+      # A failure here (say, the scan's server is down) shouldn't hold up today's puzzle.
+      # The tomorrow-tiled job below marks the run as failed afterwards.
+      - id: prepare
+        name: Tile tomorrow's map ahead of time
         continue-on-error: true
         run: globepoch prepare --days 1 ${DATE:+--date "$DATE"}
 
@@ -132,3 +134,15 @@ jobs:
     steps:
       - id: deployment
         uses: actions/deploy-pages@v5
+
+  # Fails the run, after today's puzzle is published, when tomorrow's map couldn't be tiled,
+  # so GitHub sends a failure notice. Tomorrow's build fails too unless the tiles get into
+  # the bucket first, for example with scripts/upload-tiles.sh.
+  tomorrow-tiled:
+    needs: [build, deploy]
+    if: ${{ !cancelled() && needs.build.outputs.prepare == 'failure' }}
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "::error title=Tomorrow's map isn't tiled::globepoch prepare failed in the build job; see its log."
+          exit 1

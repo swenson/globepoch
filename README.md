@@ -106,8 +106,8 @@ reuse `.cache/globepoch/`.
 
 [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) runs on every push to `main`,
 on a daily schedule starting at 00:01 UTC (when the new puzzle starts), and by hand from the
-Actions tab, where
-you can give it a date to build the site as it would look on that day. Each run:
+Actions tab, where you can give it a date to build the site as it would look on that day. Each
+run:
 
 1. **build** — builds the site with `--tiles-url` pointing at the bucket, then runs
    `globepoch prepare` so tomorrow's run finds tomorrow's map already uploaded. Pyramids the bucket doesn't have yet go into a `tiles` artifact.
@@ -116,13 +116,15 @@ you can give it a date to build the site as it would look on that day. Each run:
    sees the bucket keys.
 3. **deploy** — publishes the pages to GitHub Pages, but only if the upload worked, so a page
    never links to tiles that aren't there.
+4. **tomorrow-tiled** — runs only when `globepoch prepare` failed, and fails the run after
+   the deploy, so GitHub sends a failure notice (see [Tiling maps locally](#tiling-maps-locally)).
 
 GitHub can start scheduled runs hours late when it's busy, or skip them, so the workflow is
 also scheduled at 00:17, 00:43, 01:29 and 03:13 UTC. Each of those rebuilds the same day, so
 whichever runs first publishes the new puzzle and the rest change nothing. Once the new puzzle is
 due, the page's countdown says it's coming soon and checks the front page every two minutes,
-then links to the new map when it's up. [`ci.yml`](.github/workflows/ci.yml) runs the linters and tests on
-pushes and pull requests.
+then links to the new map when it's up. [`ci.yml`](.github/workflows/ci.yml) runs the
+linters and tests on pushes and pull requests.
 
 ### One-time setup
 
@@ -164,6 +166,23 @@ pushes and pull requests.
 
    Porkbun's parking records (an apex `ALIAS` and a `*` wildcard `CNAME`) and its URL forward
    are removed; a wildcard record would let any subdomain point at GitHub Pages.
+
+### Tiling maps locally
+
+The build job downloads scans from the collection's IIIF server, and that server can refuse
+GitHub's runners (the Library of Congress has answered them with `429 Too Many Requests`).
+When the build can't tile tomorrow's map, it still publishes today's, and then the
+`tomorrow-tiled` job fails the run so GitHub sends a failure notice. To tile maps on your own
+machine and upload them so the workflow never has to download them:
+
+```sh
+globepoch prepare --days 30 --upload-dir _tiles   # pyramids for the next 30 days that the bucket lacks
+scripts/upload-tiles.sh                           # upload _tiles/ to the bucket
+```
+
+`upload-tiles.sh` needs the AWS CLI and a Spaces key in `~/.config/globepoch/spaces.env`,
+with `SPACES_ACCESS_KEY_ID=` and `SPACES_SECRET_ACCESS_KEY=` lines. `prepare` uses
+`GLOBEPOCH_TILES_URL` for the bucket's URL, or `--tiles-url`.
 
 The bucket name and endpoint are set at the top of `deploy.yml` (`SPACES_BUCKET`,
 `SPACES_ENDPOINT`) if they ever change.
