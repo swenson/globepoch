@@ -37,6 +37,20 @@ year it was made. It runs at <https://globepoch.com>.
   off the closest guess was, plus your streak when it's two days or more, and the last line is
   the link to the puzzle.
 
+## Analytics
+
+The pages load [GoatCounter](https://www.goatcounter.com/)'s `count.js`, which counts page
+views without cookies or per-person IDs. Its dashboard is at <https://swenson.goatcounter.com>.
+The game also sends two kinds of events:
+
+- `#<n> started` on a round's first guess;
+- `#<n> score <range>` when a round ends, with the range from the stats chart (`100`, `95–99`,
+  `90–94`, `75–89`, `50–74`, `1–49`, `0`). The event's title has the exact score, the guesses
+  used, and whether it was played on the day or from the archive.
+
+The guesses themselves aren't sent. `count.js` doesn't count pages served from `localhost`, so
+local builds don't show up.
+
 ## How it's built
 
 `globepoch` (also `python -m globepoch`) is a small static site generator. For each day from

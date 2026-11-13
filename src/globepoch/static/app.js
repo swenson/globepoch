@@ -224,6 +224,18 @@
     return answer;
   }
 
+  // Anonymous GoatCounter events (no cookies); see "Analytics" in the README. count.js
+  // skips localhost, and its absence (blocked or not loaded yet) is fine.
+  function track(path, title) {
+    try {
+      if (window.goatcounter && window.goatcounter.count) {
+        window.goatcounter.count({ path, title, event: true });
+      }
+    } catch {
+      // Analytics must never break the game.
+    }
+  }
+
   function submitGuess(guess) {
     const state = loadState();
     if (state.results[P.number]) return showResult(state);
@@ -235,6 +247,7 @@
     }
     const guesses = previous.concat(guess);
     delete state.draft;
+    if (!previous.length) track(`#${P.number} started`, `${P.name} #${P.number}: first guess`);
     if (hintFor(guess, a.year).hit || guesses.length >= MAX_GUESSES) {
       const best = closest(guesses, a.year); // your closest guess counts
       state.results[P.number] = {
@@ -247,6 +260,12 @@
       if (P.number < P.latest) state.results[P.number].late = true;
       delete state.progress[P.number];
       saveState(state);
+      const r = state.results[P.number];
+      track(
+        `#${P.number} score ${bucketLabel(r.score).replace("🎯 ", "")}`,
+        `${P.name} #${P.number}: ${r.score} points, ${guesses.length}/${MAX_GUESSES} guesses, ` +
+          (r.late ? "from the archive" : "on the day"),
+      );
       renderHints([]);
       showResult(state, true);
     } else {

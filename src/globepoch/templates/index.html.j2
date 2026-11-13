@@ -132,6 +132,7 @@
     </ol>
     <p>Printed dates have been <span class="redacted-sample">blacked out</span>. Keep a streak going by scoring on consecutive days, then share your result with friends.</p>
     <p class="muted">A new map arrives every day just after midnight UTC. Every earlier map stays playable from the calendar button at the top; those plays count toward your stats but not your streak.</p>
+    <p class="muted">Visits, rounds started and scores are counted anonymously with <a href="https://www.goatcounter.com/">GoatCounter</a>, without cookies. Your guesses and stats stay in your browser.</p>
   </dialog>
 
   <dialog class="modal" id="stats-modal" aria-labelledby="stats-title">
@@ -155,5 +156,6 @@
   <script id="puzzle-data" type="application/json">{{ puzzle_json | safe }}</script>
   <script src="https://cdn.jsdelivr.net/npm/openseadragon@5.0.1/build/openseadragon/openseadragon.min.js" crossorigin="anonymous"></script>
   <script src="{{ base }}static/app.js"></script>
+  <script data-goatcounter="https://swenson.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 </body>
 </html>
