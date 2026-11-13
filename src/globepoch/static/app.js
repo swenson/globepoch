@@ -407,15 +407,49 @@
     if (countdownTimer) return;
     const el = $("countdown");
     if (!el) return;
+    // The next map is due at the UTC midnight after this page's date. The deploy that
+    // publishes it can start late, so once it is due, poll the front page until it is up.
+    const due = Date.parse(`${P.date}T00:00:00Z`) + 86400000;
+    const pad = (v) => String(v).padStart(2, "0");
     const update = () => {
-      const now = new Date();
-      const next = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1);
-      const s = Math.max(0, Math.floor((next - now.getTime()) / 1000));
-      const pad = (v) => String(v).padStart(2, "0");
-      el.textContent = `${pad(Math.floor(s / 3600))}:${pad(Math.floor(s / 60) % 60)}:${pad(s % 60)}`;
+      const s = Math.floor((due - Date.now()) / 1000);
+      if (s > 0) {
+        el.textContent = `${pad(Math.floor(s / 3600))}:${pad(Math.floor(s / 60) % 60)}:${pad(s % 60)}`;
+        return;
+      }
+      clearInterval(countdownTimer);
+      el.parentElement.textContent = "The next map is coming soon.";
+      waitForNextMap();
     };
     update();
-    countdownTimer = setInterval(update, 1000);
+    if (Date.now() < due) countdownTimer = setInterval(update, 1000);
+  }
+
+  function waitForNextMap() {
+    const home = P.base || "./";
+    const check = async () => {
+      if (document.hidden) return false;
+      try {
+        // "reload" refreshes the browser's cached copy, so following the link shows the new page.
+        const res = await fetch(home, { cache: "reload" });
+        const m = /id="puzzle-data"[^>]*>([\s\S]*?)<\/script>/.exec(await res.text());
+        const n = m && JSON.parse(m[1]).number;
+        if (!(n > P.number)) return false;
+        const p = document.querySelector(".next");
+        p.textContent = "";
+        const a = document.createElement("a");
+        a.href = home;
+        a.textContent = `Map #${n} is out. Play it →`;
+        p.append(a);
+        return true;
+      } catch {
+        return false;
+      }
+    };
+    const poll = async () => {
+      if (!(await check())) setTimeout(poll, 120000);
+    };
+    poll();
   }
 
   // ---------------------------------------------------------------- modals

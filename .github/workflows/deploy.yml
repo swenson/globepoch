@@ -9,7 +9,13 @@ on:
   push:
     branches: [main]
   schedule:
-    - cron: "1 0 * * *" # 00:01 UTC, when the new puzzle starts
+    # The new puzzle starts at 00:00 UTC. GitHub can start scheduled runs hours late or skip
+    # them, so later runs rebuild the same day in case the earlier ones haven't happened.
+    - cron: "1 0 * * *"
+    - cron: "17 0 * * *"
+    - cron: "43 0 * * *"
+    - cron: "29 1 * * *"
+    - cron: "13 3 * * *"
   workflow_dispatch:
     inputs:
       date:

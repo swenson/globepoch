@@ -105,7 +105,8 @@ reuse `.cache/globepoch/`.
 ## Deployment
 
 [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) runs on every push to `main`,
-at 00:01 UTC every day (when the new puzzle starts), and by hand from the Actions tab, where
+on a daily schedule starting at 00:01 UTC (when the new puzzle starts), and by hand from the
+Actions tab, where
 you can give it a date to build the site as it would look on that day. Each run:
 
 1. **build** — builds the site with `--tiles-url` pointing at the bucket, then runs
@@ -116,8 +117,11 @@ you can give it a date to build the site as it would look on that day. Each run:
 3. **deploy** — publishes the pages to GitHub Pages, but only if the upload worked, so a page
    never links to tiles that aren't there.
 
-GitHub sometimes starts scheduled runs late when it's busy, so the new puzzle can appear a few
-minutes after midnight. [`ci.yml`](.github/workflows/ci.yml) runs the linters and tests on
+GitHub can start scheduled runs hours late when it's busy, or skip them, so the workflow is
+also scheduled at 00:17, 00:43, 01:29 and 03:13 UTC. Each of those rebuilds the same day, so
+whichever runs first publishes the new puzzle and the rest change nothing. Once the new puzzle is
+due, the page's countdown says it's coming soon and checks the front page every two minutes,
+then links to the new map when it's up. [`ci.yml`](.github/workflows/ci.yml) runs the linters and tests on
 pushes and pull requests.
 
 ### One-time setup
